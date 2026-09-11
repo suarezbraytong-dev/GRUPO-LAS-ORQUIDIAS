@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verificar Afiliación - Las Orquideas</title>
+<style>
+body{font-family:Arial;background:linear-gradient(135deg,#f5e6ff,#e0c3ff);min-height:100vh;padding:20px;text-align:center}
+.top{max-width:600px;margin:0 auto 15px;background:#111;color:#fff;padding:10px 18px;border-radius:12px;display:flex;justify-content:space-between;align-items:center}
+.badge{background:#dcfce7;color:#166534;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:800}
+.box{max-width:600px;margin:0 auto;background:#fff;padding:30px;border-radius:20px;box-shadow:0 15px 40px rgba(0,0,0,.2)}
+.ok{color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;padding:10px;border-radius:10px;font-weight:bold;font-size:16px}
+.bad{color:#991b1b;background:#fef2f2;border:1px solid #fecaca;padding:10px;border-radius:10px;font-weight:bold}
+input{padding:12px;width:68%;border-radius:10px;border:2px solid #a084ff;margin:10px;outline:none}
+button{background:#5a189a;color:#fff;padding:12px 25px;border:none;border-radius:10px;font-weight:bold;cursor:pointer}
+button:hover{background:#7b2cbf}
+#res{margin-top:20px;padding:18px;background:#f8f0ff;border-radius:12px;min-height:80px;text-align:left;line-height:1.6}
+.footer-ver{margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:11px;color:#666}
+.footer-ver b{color:#5a189a}
+</style>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig = { apiKey: "AIzaSyCX4d3w5FrCWUtM4e8lSYoNF6rtLh7HEuc", authDomain: "las-orquideas-f7a31.firebaseapp.com", projectId: "las-orquideas-f7a31", storageBucket: "las-orquideas-f7a31.firebasestorage.app", messagingSenderId: "971405331667", appId: "1:971405331667:web:ea97bcdf5020515c1d5826" };
+const app=initializeApp(firebaseConfig); const db=getFirestore(app);
+function getCedula(obj){ return String(obj.cedula || obj.doc || obj.Documento || obj.cc || "").trim(); }
+function getTitular(obj){ return String(obj.titular || obj.Titular || obj.cedulaTitular || obj.afiliadoId || "").trim(); }
+function getNombre(o){ return o.nombre || o.Nombre || "Sin nombre"; }
+async function buscar(cedParam){
+ let ced=String(cedParam || document.getElementById('cedInput').value).trim(); if(!ced) return alert('Pon cédula');
+ document.getElementById('ced').innerText=ced; document.getElementById('res').innerHTML='🔍 Buscando...';
+ try{
+   const afiliados=(await getDocs(collection(db,"afiliados"))).docs.map(d=>({id:d.id,...d.data()}));
+   const beneficiarios=(await getDocs(collection(db,"beneficiarios"))).docs.map(d=>({id:d.id,...d.data()}));
+   let titular=afiliados.find(a=>getCedula(a)===ced);
+   if(titular){
+     let bens=beneficiarios.filter(b=>getTitular(b)===getCedula(titular) || getTitular(b)===titular.id || b.afiliadoId===titular.id);
+     document.getElementById('res').innerHTML=`<div class=ok>✅ AFILIACIÓN VIGENTE - TITULAR VERIFICADO</div><br><b>🌺 ${getNombre(titular)}</b><br>CC: ${getCedula(titular)}<br>Plan: ${titular.plan||''}<br>Estado: AL DIA<br><br><b>Grupo Familiar (${bens.length}):</b><br>${bens.map(x=>`- ${getNombre(x)} (${x.parentesco||''}) CC:${getCedula(x)}`).join('<br>')||'Solo titular'}<br><br><small>Verificado: ${new Date().toLocaleString()}</small>`;
+     return;
+   }
+   let ben=beneficiarios.find(b=>getCedula(b)===ced);
+   if(ben){
+     let titCed=getTitular(ben); let tit=afiliados.find(a=>getCedula(a)===titCed || a.id===ben.afiliadoId);
+     document.getElementById('res').innerHTML=`<div class=ok>✅ AFILIACIÓN VIGENTE - BENEFICIARIO</div><br><b>${getNombre(ben)}</b><br>CC: ${getCedula(ben)}<br>Parentesco: ${ben.parentesco||''}<br><br><b>Titular:</b> ${tit?getNombre(tit):titCed}<br>CC Titular: ${tit?getCedula(tit):titCed}<br>Plan: ${tit?tit.plan:''}<br>Estado: AL DIA<br><br><small>Verificado: ${new Date().toLocaleString()}</small>`;
+     return;
+   }
+   document.getElementById('res').innerHTML=`<div class=bad>❌ CÉDULA NO REGISTRADA</div><br>CC ${ced} no está.<br><small>Titulares: ${afiliados.length} | Beneficiarios: ${beneficiarios.length}</small>`;
+ }catch(e){document.getElementById('res').innerText='Error: '+e.message}
+}
+window.buscar=buscar;
+window.onload=()=>{ let c=new URLSearchParams(location.search).get('cedula'); if(c){document.getElementById('cedInput').value=c; buscar(c);} };
+</script></head><body>
+<div class="top"><div>🌸 LAS ORQUÍDEAS</div><div class="badge">✔ Verificada</div></div>
+<div class="box"><h2>🌺 Verificación Las Orquideas</h2>
+<p style="margin-top:10px">Cédula: <b id="ced">-</b></p>
+<input id="cedInput" placeholder="Escribe cédula a verificar"><br>
+<button onclick="buscar()">VERIFICAR ✔</button>
+<div id="res">Ingresa tu numero de cédula</div>
+<div class="footer-ver">
+<div>🌐 Seguro<br><b>VERIFICADO</b></div>
+</div>
+<br><a href="index.html" style="color:#5a189a;font-size:13px">← Volver al inicio</a>
+</div></body></html>

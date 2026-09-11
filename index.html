@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GRUPO LAS ORQUIDEAS</title>
+<meta name="description" content="Previsión Exequial en Cali desde $25.000/mes. Afiliación en 30 min. 8 beneficiarios. Atención 24h">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,Arial}
+body{background:#fff;color:#333}
+header{background:linear-gradient(135deg,#5a189a,#7b2cbf);color:white;padding:60px 20px;text-align:center}
+.btn{padding:14px 28px;border-radius:30px;font-weight:bold;text-decoration:none;display:inline-block;margin:8px;cursor:pointer;border:none}
+.btn-verde{background:#25D366;color:white}.btn-morado{background:#5a189a;color:white}.btn-blanco{background:white;color:#5a189a}
+.planes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:1100px;margin:-40px auto 40px;padding:20px}
+.plan{background:white;border-radius:20px;padding:30px;box-shadow:0 15px 35px rgba(0,0,0,.15);text-align:center;border-top:6px solid #5a189a;position:relative}
+.plan.destacado{transform:scale(1.05);border-top-color:#ff9f1c}
+.precio{font-size:36px;font-weight:bold;color:#5a189a;margin:15px 0}
+.plan ul{text-align:left;list-style:none;margin:20px 0}
+.plan ul li{padding:8px 0;border-bottom:1px solid #f0f0f0}
+.plan ul li::before{content:"✅ "}
+.seccion{max-width:1100px;margin:40px auto;padding:0 20px}
+.verificador{background:linear-gradient(135deg,#f5e6ff,#e0aaff);padding:50px 20px;text-align:center;border-radius:20px;margin:40px 20px}
+.form-box{max-width:700px;margin:30px auto;background:#f8f0ff;padding:25px;border-radius:20px;border:2px solid #7b2cbf}
+.form-box input,.form-box select{width:100%;padding:13px;margin:8px 0;border:2px solid #c8b6ff;border-radius:10px;font-size:15px}
+.form-box label{font-weight:bold;color:#5a189a;font-size:13px;text-align:left;display:block;margin-top:10px}
+.mapa{width:100%;height:380px;border:0;border-radius:16px;margin-top:15px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+footer{background:#1a1a1a;color:#aaa;padding:30px;text-align:center;margin-top:40px}
+@media(max-width:700px){.grid-2{grid-template-columns:1fr}.plan.destacado{transform:scale(1)}}
+</style>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig = { apiKey: "AIzaSyCX4d3w5FrCWUtM4e8lSYoNF6rtLh7HEuc", authDomain: "las-orquideas-f7a31.firebaseapp.com", projectId: "las-orquideas-f7a31", storageBucket: "las-orquideas-f7a31.firebasestorage.app", messagingSenderId: "971405331667", appId: "1:971405331667:web:ea97bcdf5020515c1d5826" };
+const app = initializeApp(firebaseConfig);
+window.dbF = getFirestore(app);
+window.fb = { collection, getDocs, doc, setDoc };
+</script>
+</head>
+<body>
+
+<header>
+<div style="font-size:60px">🌺</div>
+<h1>GRUPO LAS ORQUIDEAS</h1>
+<p>Previsión Exequial en Cali - Desde $25.000/mes - Afiliación en 30 min</p>
+<p>📍 Cra 28 # 45-12, Cali - Valle | 🕒 24 Horas</p>
+<div style="margin-top:20px">
+<a class="btn btn-verde" href="#formAfiliacion">📝 Afiliarme Ahora</a>
+<a class="btn btn-blanco" href="#ubicacion">📍 Ver Mapa</a>
+</div>
+</header>
+
+<div class="planes" id="planes">
+<div class="plan"><h3>PLAN BÁSICO</h3><div class="precio">$25.000<small>/mes</small></div><ul><li>2 beneficiarios</li><li>Ataúd estándar</li><li>Sala 24h</li><li>Carroza</li><li>Trámites</li></ul><button class="btn btn-morado" onclick="setPlan('BASICO')">Elegir Básico</button></div>
+<div class="plan destacado"><div style="background:#ff9f1c;color:white;padding:5px 12px;border-radius:20px;font-size:12px;position:absolute;top:-12px;left:50%;transform:translateX(-50%)">MÁS VENDIDO</div><h3>PLAN FAMILIAR</h3><div class="precio">$40.000<small>/mes</small></div><ul><li>8 beneficiarios</li><li>Ataúd premium</li><li>Sala + café</li><li>Buseta 20 personas</li><li>Flores + obituario</li><li>Bóveda 4 años</li></ul><button class="btn btn-verde" onclick="setPlan('FAMILIAR')">Elegir Familiar</button></div>
+<div class="plan"><h3>PLAN PREMIUM</h3><div class="precio">$70.000<small>/mes</small></div><ul><li>10 beneficiarios + mascota</li><li>Ataúd de lujo</li><li>Sala premium</li><li>Bóveda perpetuidad</li><li>Repatriación</li></ul><button class="btn btn-morado" onclick="setPlan('PREMIUM')">Elegir Premium</button></div>
+</div>
+
+<div class="seccion" id="formAfiliacion">
+<h2 style="text-align:center;color:#5a189a">📝 Afíliate en 2 minutos - Directo a mi WhatsApp</h2>
+<div class="form-box">
+<label>Nombre completo *</label><input id="f_nombre" placeholder="Ej: Braytong Suarez">
+<label>Cédula *</label><input id="f_cedula" placeholder="Ej: 1234567890">
+<label>WhatsApp *</label><input id="f_whats" placeholder="Ej: 3001234567">
+<label>Barrio en Cali</label><input id="f_barrio" placeholder="Ej: Ciudadela Floralia">
+<label>Plan que quieres *</label>
+<select id="f_plan"><option value="">Selecciona plan</option><option value="BASICO">BASICO $25.000 - 2 ben</option><option value="FAMILIAR" selected>FAMILIAR $40.000 - 8 ben</option><option value="PREMIUM">PREMIUM $70.000 - 10 ben</option></select>
+<label>¿Cuántos beneficiarios?</label><select id="f_ben"><option>2 personas</option><option>4 personas</option><option>8 personas - Familiar</option><option>10 personas - Premium</option></select>
+<label>Mensaje adicional</label><input id="f_msg" placeholder="Ej: Quiero afiliarme hoy mismo">
+<button class="btn btn-verde" style="width:100%;font-size:18px;padding:16px;margin-top:15px" onclick="enviarWhatsApp()">💬 ENVIAR AFILIACIÓN POR WHATSAPP</button>
+</div>
+</div>
+
+<div class="verificador">
+<h2 style="color:#5a189a">🔍 ¿Ya estás afiliado? Verifica tu contrato con tu cédula</h2>
+<input id="cedulaWeb" placeholder="Escribe tu cédula" style="padding:14px;width:100%;max-width:350px;border:2px solid #7b2cbf;border-radius:10px;margin:10px">
+<br><button class="btn btn-morado" onclick="verificarWeb()">Verificar Estado REAL</button>
+<div id="resultadoWeb" style="margin-top:15px; font-weight:bold"></div>
+</div>
+
+<div class="seccion" id="ubicacion">
+<h2 style="text-align:center;color:#5a189a;margin-bottom:15px">📍 Dónde estamos</h2>
+<div class="grid-2">
+<div>
+<div style="background:#f8f0ff;padding:20px;border-radius:14px">
+<h3 style="color:#5a189a">🌺 GRUPO Las Orquideas</h3>
+<p>📍 <b>Cra 28 # 45-12, La Base, Cali</b></p>
+<p>📞 314 123 4567 | 💬 300 123 4567 (24h)</p>
+<p>🕒 Atención 24 horas</p>
+<div style="margin-top:15px">
+<a class="btn btn-verde" href="https://wa.me/573001234567?text=Hola,%20quiero%20ubicacion" target="_blank">💬 WhatsApp</a>
+<a class="btn btn-morado" href="https://www.google.com/maps/search/?api=1&query=Carrera+28+%2345-12+Cali" target="_blank">📍 Google Maps</a>
+</div>
+</div>
+</div>
+<div><iframe class="mapa" src="https://www.google.com/maps?q=Carrera+28+%2345-12+Cali&z=16&output=embed" loading="lazy"></iframe></div>
+</div>
+</div>
+
+<footer>
+<p>🌺 GRUPO LAS ORQUIDEAS - Cali</p>
+<p><a href="verificar.html" style="color:#e0aaff">Verificador</a>
+<p style="font-size:11px;margin-top:10px;opacity:.6">© 2026 Las Orquideas</p>
+</footer>
+
+<script>
+const MI_WHATSAPP = "573158297501"; // <-- TU NUMERO REAL
+const BASE_URL = window.location.origin + window.location.pathname.replace('index.html','').replace(/\/$/,'');
+
+function setPlan(plan){
+  let sel = document.getElementById('f_plan');
+  if(plan==='BASICO') sel.value='BASICO';
+  if(plan==='FAMILIAR') sel.value='FAMILIAR';
+  if(plan==='PREMIUM') sel.value='PREMIUM';
+  document.getElementById('formAfiliacion').scrollIntoView({behavior:'smooth'});
+}
+
+async function enviarWhatsApp(){
+ let n=document.getElementById('f_nombre').value.trim();
+ let c=document.getElementById('f_cedula').value.trim();
+ let w=document.getElementById('f_whats').value.trim();
+ let b=document.getElementById('f_barrio').value.trim();
+ let p=document.getElementById('f_plan').value;
+ let nb=document.getElementById('f_ben').value;
+ let m=document.getElementById('f_msg').value.trim();
+ if(!n||!c||!w||!p) return alert('Falta nombre, cédula, WhatsApp y plan');
+
+ // 1. Guardar LEAD en Firebase para que no se pierda
+ try{
+   const {doc,setDoc} = window.fb;
+   await setDoc(doc(window.dbF,"leads",c+"_"+Date.now()), {nombre:n, cedula:c, whats:w, barrio:b, plan:p, beneficiarios:nb, mensaje:m, fecha:new Date().toISOString(), estado:"NUEVO_WEB"});
+ }catch(e){}
+
+ let linkVerif = BASE_URL + "/verificar.html?cedula=" + c;
+ let texto=`🌺 *NUEVA AFILIACIÓN WEB - LAS ORQUIDEAS*%0A%0A👤 *Nombre:* ${n}%0A🪪 *Cédula:* ${c}%0A📱 *WhatsApp:* ${w}%0A📍 *Barrio:* ${b||'No indicó'}%0A📦 *Plan:* ${p}%0A👨‍👩‍👧 *Beneficiarios:* ${nb}%0A💬 *Mensaje:* ${m||'Quiero afiliarme ya'}`;
+ window.open(`https://wa.me/${MI_WHATSAPP}?text=${texto}`,'_blank');
+}
+
+async function verificarWeb(){
+ let ced=document.getElementById('cedulaWeb').value.trim();
+ if(!ced) return alert('Escribe cédula');
+ document.getElementById('resultadoWeb').innerText='⏳ Verificando en Firebase...';
+ try{
+   const {collection,getDocs} = window.fb;
+   const snap = await getDocs(collection(window.dbF,"afiliados"));
+   let found = snap.docs.map(d=>d.data()).find(a=>a.cedula===ced);
+   if(found){
+     document.getElementById('resultadoWeb').innerHTML=`✅ <b>${found.nombre}</b> está ACTIVO - Plan ${found.plan} <br><a href="verificar.html?cedula=${ced}">Ver carnet con QR</a>`;
+   }else{
+     document.getElementById('resultadoWeb').innerHTML=`❌ Cédula ${ced} no encontrada - <a href="#formAfiliacion">Afíliate aquí</a>`;
+   }
+ }catch(e){
+   window.location.href='verificar.html?cedula='+ced;
+ }
+}
+</script>
+</body>
+</html>
